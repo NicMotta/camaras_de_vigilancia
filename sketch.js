@@ -2,6 +2,16 @@ let faceapi;
 let video;
 let detections;
 
+//----
+var vScale_video;
+var vScale_camara;
+let c;
+let nx, ny;
+let nboxw, nboxh;
+let video_camara;
+
+let nvideo;
+
 // by default all options are set to true
 const detection_options = {
     withLandmarks: true,
@@ -13,13 +23,33 @@ function setup() {
     //createCanvas(800, 600);
     createCanvas(displayWidth-50, displayHeight-25);
 
+
     // load up your video
     video = createCapture(VIDEO);
     video.size(width, height);
     video.hide(); // esconder el video inicial (sin trackeo)
     faceapi = ml5.faceApi(video, detection_options, modelReady)
-    textAlign(RIGHT);
+    pixelDensity(1);
+
+
+    video_camara = createVideo('assets/cam_1.mp4',video_camaraLoad);
+    video_camara.size(width, height);
+    video_camara.hide();
 }
+
+function video_camaraLoad() {
+  video_camara.loop();
+  video_camara.volume(0);
+}
+
+//-------
+//-------
+function draw(){
+
+}
+
+//------
+//------
 
 function modelReady() {
     console.log('ready!')
@@ -36,11 +66,12 @@ function gotResults(err, result) {
         console.log(err)
         return
     }
-    // console.log(result)
     detections = result;
 
-    //background(220);
     image(video, 0,0, width, height)
+    image(video_camara, 0, 0);
+    nvideo = copy(video, nx, ny, nboxw, nboxh, nx, ny, nboxw, nboxh);
+
     if (detections) {
         if (detections.length == 1) {
             // console.log(detections)
@@ -52,20 +83,11 @@ function gotResults(err, result) {
            detections = 1
            drawBox(detections)
          }
-
-
     }
     faceapi.detect(gotResults)
 }
 
 function drawBox(detections){
-
-//  background(0);
-
-//  noStroke();
-//  fill(255,255,0);
-//  rect(0,0,displayWidth/3, displayHeight/2);
-
 
     for(let i = 0; i < detections.length; i++){
         const alignedRect = detections[i].alignedRect;
@@ -74,19 +96,42 @@ function drawBox(detections){
         const boxWidth = alignedRect._box._width
         const boxHeight  = alignedRect._box._height
 
-        noFill();
+        nx = x;
+        ny = y;
+        nboxw = boxWidth;
+        nboxh = boxHeight;
 
-        if (x+boxWidth/2 < displayWidth / 3){stroke(0,255,0)}
-        if (x+boxWidth/2 > displayWidth / 3){stroke(255,0,0)};
-        strokeWeight(2);
-        rect(x, y, boxWidth, boxHeight);
-        circle(x+boxWidth/2, y+boxHeight/2, 10);
-        console.log("x"+x);
-        console.log("y"+y);
+        //c = get(x, y, boxWidth, boxHeight);
+
     }
 
 }
 
+
+
+function drawPart(feature, closed){
+
+    beginShape();
+    for(let i = 0; i < feature.length; i++){
+        const x = feature[i]._x
+        const y = feature[i]._y
+        vertex(x, y)
+    }
+
+    if(closed === true){
+        endShape(CLOSE);
+    } else {
+        endShape();
+    }
+
+}
+
+
+
+
+
+
+// ACTIVAR DETECCION DE OTRAS COSAS
 /*
 function drawLandmarks(detections){
     noFill();
@@ -113,20 +158,3 @@ function drawLandmarks(detections){
 }
 
 */
-
-function drawPart(feature, closed){
-
-    beginShape();
-    for(let i = 0; i < feature.length; i++){
-        const x = feature[i]._x
-        const y = feature[i]._y
-        vertex(x, y)
-    }
-
-    if(closed === true){
-        endShape(CLOSE);
-    } else {
-        endShape();
-    }
-
-}
