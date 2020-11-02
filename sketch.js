@@ -1,5 +1,5 @@
 let faceapi;
-let video;
+let camara_web;
 let detections;
 
 //----
@@ -8,7 +8,7 @@ var vScale_camara;
 let c;
 let nx, ny;
 let nboxw, nboxh;
-let video_camara;
+let camara_vigilancia;
 
 let nvideo;
 
@@ -22,25 +22,24 @@ const detection_options = {
 function setup() {
     //createCanvas(800, 600);
     createCanvas(displayWidth-50, displayHeight-25);
-    var vScale=14
+    var vScale=8
 
 
     // load up your video
-    video = createCapture(VIDEO);
-    video.size(width, height);
-    //video.hide(); // esconder el video inicial (sin trackeo)
-    faceapi = ml5.faceApi(video, detection_options, modelReady)
+    camara_web = createCapture(VIDEO);
+    camara_web.size(width, height);
+    camara_web.hide(); // esconder el video inicial (sin trackeo)
+    faceapi = ml5.faceApi(camara_web, detection_options, modelReady)
     pixelDensity(1);
 
-
-    video_camara = createVideo('assets/cam_1.mp4',video_camaraLoad);
-    video_camara.size(width, height);
-    video_camara.hide();
+    camara_vigilancia = createVideo('assets/cam_1.mp4',camara_vigilanciaLoad);
+    camara_vigilancia.size(width, height);
+    camara_vigilancia.hide();
 }
 
-function video_camaraLoad() {
-  video_camara.loop();
-  video_camara.volume(0);
+function camara_vigilanciaLoad() {
+  camara_vigilancia.loop();
+  camara_vigilancia.volume(0);
 }
 
 
@@ -58,16 +57,9 @@ function gotResults(err, result) {
     }
     detections = result;
 
-
-    //image(video, 0,0, width, height)
-    image(video_camara, 0, 0);
-    nvideo = copy(video, nx, ny, nboxw, nboxh, nx, ny, nboxw, nboxh);
-
     if (detections) {
         if (detections.length == 1) {
-            // console.log(detections)
             drawBox(detections)
-            //drawLandmarks(detections)
         }
 
         if (detections.length > 1){
@@ -91,49 +83,40 @@ function drawBox(detections){
         ny = y;
         nboxw = boxWidth;
         nboxh = boxHeight;
-
-        //c = get(x, y, boxWidth, boxHeight);
-
     }
-
 }
+
 
 function draw(){
-  image(video, 0,0, width, height)
-  video.loadPixels();
-  loadPixels();
-  for (var y=0; y < video.height;y ++){
-    for (var x=0; x < video.width ;x ++){
-      var index= (x+y*video.width)*4;
-      var r = video.pixels[index+0]
-      var g = video.pixels[index+1]
-      var b = video.pixels[index+2]
-
-
-      var bright= (r+g+b)/2;
-
-      var alfa
-      if (bright<150){
-       alfa = 200
-      }else{
-        alfa=100
-      }
-
-      var w = map(bright,0, 255, 0, vScale)
-
-      fill(bright,alfa)
-      noStroke();
-      //image(icono,x*vScale,y*vScale,w,w)
-      rect(x*vScale,y*vScale,w,w)
-      rectMode=CENTER
-
-
-    }
-  }
+  background(0);
+  image(camara_vigilancia, 0, 0);
+  nvideo = copy(camara_web, nx, ny, nboxw, nboxh, nx, ny, nboxw, nboxh);
+  //filter(BLUR, 3);
 }
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
 function drawPart(feature, closed){
 
     beginShape();
@@ -151,10 +134,7 @@ function drawPart(feature, closed){
 
 }
 
-
-
-
-
+*/
 
 // ACTIVAR DETECCION DE OTRAS COSAS
 /*
