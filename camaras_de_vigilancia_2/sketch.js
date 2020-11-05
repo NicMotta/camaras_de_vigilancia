@@ -11,13 +11,13 @@ PoseNet example using p5.js
 let video;
 let poseNet;
 let poses = [];
-
 let nx, ny;
 let vw, vh;
-
 var vScale;
-
 let camara_vigilancia;
+let tabla;
+let numero_random;
+let timer;
 
 function setup() {
   //createCanvas(displayWidth-50, displayHeight-50);
@@ -42,6 +42,13 @@ function setup() {
   camara_vigilancia.size(width, height);
   camara_vigilancia.hide();
 
+  tabla = new p5.Table();
+  tabla.addColumn('id');
+  tabla.addColumn('eje_x');
+  tabla.addColumn('eje_y');
+
+  let numero_random = random(500);
+
 }
 
 function camara_vigilanciaLoad() {
@@ -63,7 +70,12 @@ function draw() {
 
   let n_video = copy(video, nx, ny, vw, vh, nx, ny, vw, vh);
 
-  //filter(BLUR, 3);
+  guardarTabla();
+
+  if (millis() >= 5000 + timer) {
+    saveTable(tabla, 'new' + numero_random + '.csv');
+    timer = millis();
+  }
 
 
 }
@@ -102,20 +114,12 @@ function drawKeypoints() {
 }
 
 
+function guardarTabla() {
 
-/*
-// A function to draw the skeletons
-function drawSkeleton() {
-  // Loop through all the skeletons detected
-  for (let i = 0; i < poses.length; i++) {
-    let skeleton = poses[i].skeleton;
-    // For every skeleton, loop through all body connections
-    for (let j = 0; j < skeleton.length; j++) {
-      let partA = skeleton[j][0];
-      let partB = skeleton[j][1];
-      stroke(255, 0, 0);
-      line(partA.position.x, partA.position.y, partB.position.x, partB.position.y);
-    }
-  }
+  let newRow = table.addRow();
+  newRow.setNum('id', table.getRowCount() - 1);
+  newRow.setString('eje_x', nx);
+  newRow.setString('eje_y', ny);
+  
 }
-*/
+
