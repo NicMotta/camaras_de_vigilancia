@@ -21,7 +21,7 @@ const detection_options = {
 
 function setup() {
     //createCanvas(800, 600);
-    createCanvas(displayWidth-50, displayHeight-25);
+    createCanvas(windowWidth-20, windowHeight-20);
     var vScale=8
 
 
@@ -96,26 +96,6 @@ function draw(){
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /*
 function drawPart(feature, closed){
 
@@ -134,10 +114,8 @@ function drawPart(feature, closed){
 
 }
 
-*/
-
 // ACTIVAR DETECCION DE OTRAS COSAS
-/*
+
 function drawLandmarks(detections){
     noFill();
     stroke(161, 95, 251)
