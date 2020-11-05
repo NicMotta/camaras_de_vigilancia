@@ -18,6 +18,7 @@ let camara_vigilancia;
 let tabla;
 let numero_random;
 let timer;
+let n_video;
 
 function setup() {
   //createCanvas(displayWidth-50, displayHeight-50);
@@ -38,7 +39,7 @@ function setup() {
   // Hide the video element, and just show the canvas
   video.hide();
 
-  camara_vigilancia = createVideo('./assets/cam_1.mp4', camara_vigilanciaLoad);
+  camara_vigilancia = createVideo('assets/cam_1.mp4', camara_vigilanciaLoad);
   camara_vigilancia.size(width, height);
   camara_vigilancia.hide();
 
@@ -47,7 +48,7 @@ function setup() {
   tabla.addColumn('eje_x');
   tabla.addColumn('eje_y');
 
-  let numero_random = random(500);
+  numero_random = random(500);
 
 }
 
@@ -68,7 +69,7 @@ function draw() {
 
   drawKeypoints();
 
-  let n_video = copy(video, nx, ny, vw, vh, nx, ny, vw, vh);
+  n_video = copy(video, nx, ny, vw, vh, nx, ny, vw, vh);
 
   guardarTabla();
 
@@ -108,6 +109,9 @@ function drawKeypoints() {
         ny = keypoint.position.y - 100;
         vw = distancia;
         vh = distancia;
+
+        //console.log(nx);
+        //console.log(ny);
       }
     }
   }
