@@ -19,6 +19,7 @@ let tabla;
 let numero_random;
 let timer;
 let n_video;
+let newRow;
 
 function setup() {
   //createCanvas(displayWidth-50, displayHeight-50);
@@ -27,29 +28,27 @@ function setup() {
   video = createCapture(VIDEO);
   video.size(width, height);
 
-
-
   // Create a new poseNet method with a single detection
   poseNet = ml5.poseNet(video, modelReady);
   // This sets up an event that fills the global variable "poses"
   // with an array every time new poses are detected
-  poseNet.on('pose', function(results) {
+  poseNet.on("pose", function (results) {
     poses = results;
   });
   // Hide the video element, and just show the canvas
   video.hide();
 
-  camara_vigilancia = createVideo('assets/cam_1.mp4', camara_vigilanciaLoad);
+  camara_vigilancia = createVideo("assets/cam_1.mp4", camara_vigilanciaLoad);
   camara_vigilancia.size(width, height);
   camara_vigilancia.hide();
 
   tabla = new p5.Table();
-  tabla.addColumn('id');
-  tabla.addColumn('eje_x');
-  tabla.addColumn('eje_y');
+  tabla.addColumn("id");
+  tabla.addColumn("eje_x");
+  tabla.addColumn("eje_y");
 
   numero_random = random(500);
-
+  timer = 0;
 }
 
 function camara_vigilanciaLoad() {
@@ -58,7 +57,7 @@ function camara_vigilanciaLoad() {
 }
 
 function modelReady() {
-  select('#status').html('Model Loaded');
+  select("#status").html("Model Loaded");
 }
 
 function draw() {
@@ -71,16 +70,16 @@ function draw() {
 
   n_video = copy(video, nx, ny, vw, vh, nx, ny, vw, vh);
 
-  guardarTabla();
+  
+  //guardarTabla();
+  
 
-  if (millis() >= 5000 + timer) {
-    saveTable(tabla, 'new' + numero_random + '.csv');
+  if (millis() >= 250 + timer) {
+    guardarTabla();
     timer = millis();
   }
-
-
+  
 }
-
 
 // A function to draw ellipses over the detected keypoints
 function drawKeypoints() {
@@ -96,7 +95,13 @@ function drawKeypoints() {
 
       let ojo_1 = pose.keypoints[1];
 
-      let distancia = dist(ojo_1.position.x, ojo_1.position.y, keypoint.position.x, keypoint.position.y) * 3;
+      let distancia =
+        dist(
+          ojo_1.position.x,
+          ojo_1.position.y,
+          keypoint.position.x,
+          keypoint.position.y
+          ) * 3;
       // Only draw an ellipse is the pose probability is bigger than 0.2
       if (keypoint.score > 0.2) {
         //fill(255, 0, 0);
@@ -110,20 +115,19 @@ function drawKeypoints() {
         vw = distancia;
         vh = distancia;
 
-        //console.log(nx);
-        //console.log(ny);
+        console.log("X: "+nx+" Y: "+ny);
       }
     }
   }
 }
 
-
-function guardarTabla() {
-
-  let newRow = table.addRow();
-  newRow.setNum('id', table.getRowCount() - 1);
-  newRow.setString('eje_x', nx);
-  newRow.setString('eje_y', ny);
-  
+function guardarTabla() {   // armar un array y generar un for para meter todos los valores del array en la tabla
+  newRow = tabla.addRow();
+  newRow.setNum("id", tabla.getRowCount() - 1);
+  newRow.setNum("eje_x", nx);
+  newRow.setNum("eje_y", ny);
 }
 
+function keyPressed(){
+  saveTable(tabla, "new" + numero_random + ".csv");
+}
