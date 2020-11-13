@@ -20,6 +20,8 @@ let numero_random;
 let timer;
 let n_video;
 let newRow;
+let nuevaimagen;
+let pics = [];
 
 function setup() {
   //createCanvas(displayWidth-50, displayHeight-50);
@@ -38,7 +40,7 @@ function setup() {
   // Hide the video element, and just show the canvas
   video.hide();
 
-  camara_vigilancia = createVideo("assets/cam_1.mp4", camara_vigilanciaLoad);
+  camara_vigilancia = createVideo("assets/cam_3.mp4", camara_vigilanciaLoad);
   camara_vigilancia.size(width, height);
   camara_vigilancia.hide();
 
@@ -64,13 +66,14 @@ function draw() {
   vScale = 8;
   background(0);
   image(camara_vigilancia, 0, 0); // camara de vigilancia
-  //image(video, 0, 0, width, height); // webcam
+  //image(video, width/5, 0, width*0.8, height); // webcam
 
   drawKeypoints();
+ 
 
   n_video = copy(video, nx, ny, vw, vh, nx, ny, vw, vh);
+  //nuevaimagen = image(copy(video, nx, ny, vw, vh, nx, ny, vw, vh));
 
-  
   //guardarTabla();
   
 
@@ -115,7 +118,7 @@ function drawKeypoints() {
         vw = distancia;
         vh = distancia;
 
-        console.log("X: "+nx+" Y: "+ny);
+        console.log("X: "+ nx +" Y: "+ny);
       }
     }
   }
@@ -131,3 +134,4 @@ function guardarTabla() {   // armar un array y generar un for para meter todos 
 function keyPressed(){
   saveTable(tabla, "new" + numero_random + ".csv");
 }
+
