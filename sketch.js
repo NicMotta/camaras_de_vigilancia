@@ -75,14 +75,15 @@ function draw() {
   //image(video, width/5, 0, width*0.8, height); // webcam
 
   drawKeypoints();
+
+  //n_video = copy(camara_vigilancia, nx, ny, vw, vh, nx, ny, width, height);
  
+  c = camara_vigilancia.get(nx, ny, 230, 120);
+  image(c, 0, 0, width, height);
+
+
   translate(video.width, 0);  // invertir la carama
   scale(-1, 1);
-  
-  //n_video = copy(video, nx, ny, vw, vh, nx, ny, vw, vh);
- 
-
-  
   
   noStroke();
   ellipse(nx, ny, 50, 50);
@@ -141,7 +142,6 @@ function drawKeypoints() {
         vh = distancia;
 
         detecta = 1;
-
 
       }
     }
