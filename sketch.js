@@ -22,6 +22,8 @@ let n_video;
 let newRow;
 let nuevaimagen;
 let pics = [];
+let detecta;
+let c;
 
 function setup() {
   //createCanvas(displayWidth-50, displayHeight-50);
@@ -29,6 +31,7 @@ function setup() {
   pixelDensity(1);
   video = createCapture(VIDEO);
   video.size(width, height);
+  
 
   // Create a new poseNet method with a single detection
   poseNet = ml5.poseNet(video, modelReady);
@@ -51,6 +54,9 @@ function setup() {
 
   numero_random = random(500);
   timer = 0;
+
+  
+
 }
 
 function camara_vigilanciaLoad() {
@@ -70,15 +76,31 @@ function draw() {
 
   drawKeypoints();
  
-
-  n_video = copy(video, nx, ny, vw, vh, nx, ny, vw, vh);
-  //nuevaimagen = image(copy(video, nx, ny, vw, vh, nx, ny, vw, vh));
-
-  //guardarTabla();
+  translate(video.width, 0);  // invertir la carama
+  scale(-1, 1);
   
+  //n_video = copy(video, nx, ny, vw, vh, nx, ny, vw, vh);
+ 
+
+  
+  
+  noStroke();
+  ellipse(nx, ny, 50, 50);
+
+  
+  /*
+  c = video.get(nx, ny, vw, vh);
+  translate(width / 4, height / 4);
+  scale(0.65);
+  image(c, nx, ny);
+*/
+
 
   if (millis() >= 250 + timer) {
-    guardarTabla();
+    if (detecta == 1) // empieza a guardar datos cuando detecta rostros, evitamos tener NaN en el .csv
+    {
+      guardarTabla();
+    }
     timer = millis();
   }
   
@@ -118,7 +140,12 @@ function drawKeypoints() {
         vw = distancia;
         vh = distancia;
 
-        console.log("X: "+ nx +" Y: "+ny);
+        detecta = 1;
+
+        c = video.get(nx, ny, vw, vh);
+        set(nx, ny, c);
+        updatePixels();
+
       }
     }
   }
