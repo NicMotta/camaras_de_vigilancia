@@ -142,9 +142,6 @@ function drawKeypoints() {
 
         detecta = 1;
 
-        c = video.get(nx, ny, vw, vh);
-        set(nx, ny, c);
-        updatePixels();
 
       }
     }
