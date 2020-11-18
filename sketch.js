@@ -8,40 +8,40 @@ ml5 Example
 PoseNet example using p5.js
 === */
 
-let video;
+let camara_web;
 let poseNet;
 let poses = [];
-let nx, ny;
-let vw, vh;
-var vScale;
+let eje_x_deteccion, eje_y_deteccion;
+let deteccion_width, deteccion_height;
 let camara_vigilancia;
 let tabla;
 let numero_random;
-let timer;
-let n_video;
-let newRow;
-let nuevaimagen;
+let timer, timer_movimiento;
+let nueva_fila;
+let nueva_imagen;
 let pics = [];
 let detecta;
-let c;
+let zoom_camara;
+let invertir;
+let desplazamiento_zoom_x, desplazamiento_zoom_y;
+
 
 function setup() {
-  //createCanvas(displayWidth-50, displayHeight-50);
+
   createCanvas(windowWidth - 20, windowHeight - 20);
   pixelDensity(1);
-  video = createCapture(VIDEO);
-  video.size(width, height);
-  
+  camara_web = createCapture(VIDEO);
+  camara_web.size(width, height);
 
   // Create a new poseNet method with a single detection
-  poseNet = ml5.poseNet(video, modelReady);
+  poseNet = ml5.poseNet(camara_web, modelReady);
   // This sets up an event that fills the global variable "poses"
   // with an array every time new poses are detected
   poseNet.on("pose", function (results) {
     poses = results;
   });
   // Hide the video element, and just show the canvas
-  video.hide();
+  camara_web.hide();
 
   camara_vigilancia = createVideo("assets/cam_3.mp4", camara_vigilanciaLoad);
   camara_vigilancia.size(width, height);
@@ -55,8 +55,10 @@ function setup() {
   numero_random = random(500);
   timer = 0;
 
-  
+  invertir = false;
 
+  desplazamiento_zoom_x = width * 0.5;
+  desplazamiento_zoom_y = height * 0.5;
 }
 
 function camara_vigilanciaLoad() {
@@ -69,43 +71,63 @@ function modelReady() {
 }
 
 function draw() {
-  vScale = 8;
   background(0);
   image(camara_vigilancia, 0, 0); // camara de vigilancia
-  //image(video, width/5, 0, width*0.8, height); // webcam
+
+  if (invertir == true) {
+    translate(camara_web.width, 0); // invertir la carama apretando la 'i'
+    scale(-1, 1);
+  }
 
   drawKeypoints();
 
-  //n_video = copy(camara_vigilancia, nx, ny, vw, vh, nx, ny, width, height);
- 
-  c = camara_vigilancia.get(nx, ny, 230, 120);
-  image(c, 0, 0, width, height);
 
+  //zoom_camara = camara_vigilancia.get(eje_x_deteccion*0.75, eje_y_deteccion * 0.9, 230, 120);
+  zoom_camara = camara_vigilancia.get(desplazamiento_zoom_x, desplazamiento_zoom_y, 230, 120);
+  image(zoom_camara, 0, 0, width, height);
 
-  translate(video.width, 0);  // invertir la carama
-  scale(-1, 1);
-  
-  noStroke();
-  ellipse(nx, ny, 50, 50);
-
-  
-  /*
-  c = video.get(nx, ny, vw, vh);
-  translate(width / 4, height / 4);
-  scale(0.65);
-  image(c, nx, ny);
-*/
-
+  noStroke(); // reemplazar aca con imagen de cara
+  ellipse(eje_x_deteccion, eje_y_deteccion, 50, 50);
+  //console.log(eje_x_deteccion, eje_y_deteccion);
 
   if (millis() >= 250 + timer) {
-    if (detecta == 1) // empieza a guardar datos cuando detecta rostros, evitamos tener NaN en el .csv
-    {
+    if (detecta == 1) {
+      // empieza a guardar datos cuando detecta rostros, evitamos tener NaN en el .csv
       guardarTabla();
     }
     timer = millis();
   }
+
   
+
+ 
+    if (detecta == 1) {
+      if (eje_x_deteccion < width * 0.3) { desplazamiento_zoom_x = desplazamiento_zoom_x - 1.5 } // aumenta +1 el valor de X de zoom camara
+      if (eje_x_deteccion > width * 0.7) { desplazamiento_zoom_x = desplazamiento_zoom_x + 1.5 } // resta -1 el valor de X de zoom camara  
+      if (eje_y_deteccion < height * 0.3) { desplazamiento_zoom_y = desplazamiento_zoom_y - 1.5 } // aumenta +1 a Y zoom camara
+      if (eje_y_deteccion > height * 0.7) { desplazamiento_zoom_y = desplazamiento_zoom_y + 1.5 } 
+      
+      if (eje_x_deteccion < width * 0.2) { desplazamiento_zoom_x = desplazamiento_zoom_x - 3 }
+      if (eje_x_deteccion > width * 0.8) { desplazamiento_zoom_x = desplazamiento_zoom_x + 3 } 
+      if (eje_y_deteccion < height * 0.2) { desplazamiento_zoom_y = desplazamiento_zoom_y - 3 } 
+      if (eje_y_deteccion > height * 0.8) { desplazamiento_zoom_y = desplazamiento_zoom_y + 3 }
+    }
+  
+  
+
+  // limites para desplazamientos
+
+  if ( desplazamiento_zoom_x <= width * 0.1 ) { desplazamiento_zoom_x = width * 0.11}
+  if ( desplazamiento_zoom_x >= width * 0.8 ) { desplazamiento_zoom_x = width * 0.79}
+
+  if ( desplazamiento_zoom_y <= height * 0.05 ) { desplazamiento_zoom_y = height * 0.051}
+  if ( desplazamiento_zoom_y >= height * 0.8 ) { desplazamiento_zoom_y = height * 0.79}
+
+console.log(desplazamiento_zoom_x, desplazamiento_zoom_y);
+
 }
+
+
 
 // A function to draw ellipses over the detected keypoints
 function drawKeypoints() {
@@ -127,35 +149,33 @@ function drawKeypoints() {
           ojo_1.position.y,
           keypoint.position.x,
           keypoint.position.y
-          ) * 3;
+        ) * 3;
       // Only draw an ellipse is the pose probability is bigger than 0.2
       if (keypoint.score > 0.2) {
-        //fill(255, 0, 0);
-        //stroke('red');
-        //noFill();
-        //ellipse(keypoint.position.x, keypoint.position.y, distancia*1.2, distancia*1.5);
-        //ellipse(keypoint.position.x, keypoint.position.y, 10, 10);
-
-        nx = keypoint.position.x - 100;
-        ny = keypoint.position.y - 100;
-        vw = distancia;
-        vh = distancia;
-
+        eje_x_deteccion = keypoint.position.x - 100;
+        eje_y_deteccion = keypoint.position.y - 100;
+        deteccion_width = distancia;
+        deteccion_height = distancia;
         detecta = 1;
-
       }
     }
   }
 }
 
-function guardarTabla() {   // armar un array y generar un for para meter todos los valores del array en la tabla
-  newRow = tabla.addRow();
-  newRow.setNum("id", tabla.getRowCount() - 1);
-  newRow.setNum("eje_x", nx);
-  newRow.setNum("eje_y", ny);
+function guardarTabla() {
+  nueva_fila = tabla.addRow();
+  nueva_fila.setNum("id", tabla.getRowCount() - 1);
+  nueva_fila.setNum("eje_x", eje_x_deteccion);
+  nueva_fila.setNum("eje_y", eje_y_deteccion);
 }
 
-function keyPressed(){
-  saveTable(tabla, "new" + numero_random + ".csv");
-}
+function keyTyped() {
+  if (key === "i") {
+    // apretando la tecla 'i' invertimos la camara
+    invertir = !invertir;
+  }
 
+  if (key === "g") {
+    saveTable(tabla, "new" + numero_random + ".csv"); // apretando la 's' guarda el .csv
+  }
+}
