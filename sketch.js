@@ -24,6 +24,7 @@ let detecta;
 let zoom_camara;
 let invertir;
 let desplazamiento_zoom_x, desplazamiento_zoom_y;
+let avatar;
 
 
 function setup() {
@@ -59,6 +60,11 @@ function setup() {
 
   desplazamiento_zoom_x = width * 0.5;
   desplazamiento_zoom_y = height * 0.5;
+
+}
+
+function preload() {
+  avatar = loadImage('assets/img/avatar.jpg');
 }
 
 function camara_vigilanciaLoad() {
@@ -86,9 +92,9 @@ function draw() {
   zoom_camara = camara_vigilancia.get(desplazamiento_zoom_x, desplazamiento_zoom_y, 230, 120);
   image(zoom_camara, 0, 0, width, height);
 
-  noStroke(); // reemplazar aca con imagen de cara
-  ellipse(eje_x_deteccion, eje_y_deteccion, 50, 50);
-  //console.log(eje_x_deteccion, eje_y_deteccion);
+  
+  image(avatar, eje_x_deteccion, eje_y_deteccion, deteccion_width * 0.75, deteccion_height * 0.75);
+
 
   if (millis() >= 250 + timer) {
     if (detecta == 1) {
@@ -123,7 +129,6 @@ function draw() {
   if ( desplazamiento_zoom_y <= height * 0.05 ) { desplazamiento_zoom_y = height * 0.051}
   if ( desplazamiento_zoom_y >= height * 0.8 ) { desplazamiento_zoom_y = height * 0.79}
 
-console.log(desplazamiento_zoom_x, desplazamiento_zoom_y);
 
 }
 
