@@ -78,7 +78,7 @@ function modelReady() {
 
 function draw() {
   background(0);
-  image(camara_vigilancia, 0, 0); // camara de vigilancia
+  //image(camara_vigilancia, 0, 0); // camara de vigilancia
 
   if (invertir == true) {
     translate(camara_web.width, 0); // invertir la carama apretando la 'i'
@@ -92,9 +92,10 @@ function draw() {
   zoom_camara = camara_vigilancia.get(desplazamiento_zoom_x, desplazamiento_zoom_y, 230, 120);
   image(zoom_camara, 0, 0, width, height);
 
-  
+  blendMode(MULTIPLY);
   image(avatar, eje_x_deteccion, eje_y_deteccion, deteccion_width * 0.75, deteccion_height * 0.75);
-
+  //blend(avatar, eje_x_deteccion, eje_y_deteccion, deteccion_width * 0.75, deteccion_height * 0.75, eje_x_deteccion, eje_y_deteccion, deteccion_width * 0.75, deteccion_height * 0.75, DARKEST);
+  blendMode(NORMAL);
 
   if (millis() >= 250 + timer) {
     if (detecta == 1) {
