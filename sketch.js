@@ -26,10 +26,12 @@ let invertir;
 let desplazamiento_zoom_x, desplazamiento_zoom_y;
 let avatar;
 
+let imagen_subida;
+
 
 function setup() {
 
-  createCanvas(windowWidth - 20, windowHeight - 20);
+  var c = createCanvas(windowWidth - 20, windowHeight - 20);
   pixelDensity(1);
   camara_web = createCapture(VIDEO);
   camara_web.size(width, height);
@@ -61,6 +63,11 @@ function setup() {
   desplazamiento_zoom_x = width * 0.5;
   desplazamiento_zoom_y = height * 0.5;
 
+  c.drop(gotFile);
+
+  textSize(width / 30);
+  textAlign(CENTER, CENTER);
+
 }
 
 function preload() {
@@ -80,6 +87,12 @@ function draw() {
   background(0);
   //image(camara_vigilancia, 0, 0); // camara de vigilancia
 
+  fill(255);
+  let texto_inicial = "Arrastre el avatar para iniciar (.... etc)";
+  text(texto_inicial, width/2, height/2);
+
+ 
+
   if (invertir == true) {
     translate(camara_web.width, 0); // invertir la carama apretando la 'i'
     scale(-1, 1);
@@ -87,15 +100,23 @@ function draw() {
 
   drawKeypoints();
 
+  if(imagen_subida){
 
   //zoom_camara = camara_vigilancia.get(eje_x_deteccion*0.75, eje_y_deteccion * 0.9, 230, 120);
   zoom_camara = camara_vigilancia.get(desplazamiento_zoom_x, desplazamiento_zoom_y, 230, 120);
   image(zoom_camara, 0, 0, width, height);
 
   blendMode(MULTIPLY);
-  image(avatar, eje_x_deteccion, eje_y_deteccion, deteccion_width * 0.75, deteccion_height * 0.75);
-  //blend(avatar, eje_x_deteccion, eje_y_deteccion, deteccion_width * 0.75, deteccion_height * 0.75, eje_x_deteccion, eje_y_deteccion, deteccion_width * 0.75, deteccion_height * 0.75, DARKEST);
+  
+  
+    image(imagen_subida, eje_x_deteccion, eje_y_deteccion, deteccion_width * 0.75, deteccion_height * 0.75);
+  
+  }
+
+  //image(avatar, eje_x_deteccion, eje_y_deteccion, deteccion_width * 0.75, deteccion_height * 0.75);
   blendMode(NORMAL);
+
+
 
   if (millis() >= 250 + timer) {
     if (detecta == 1) {
@@ -105,32 +126,34 @@ function draw() {
     timer = millis();
   }
 
+  Desplazamiento();
+
   
 
- 
-    if (detecta == 1) {
-      if (eje_x_deteccion < width * 0.3) { desplazamiento_zoom_x = desplazamiento_zoom_x - 1.5 } // aumenta +1 el valor de X de zoom camara
-      if (eje_x_deteccion > width * 0.7) { desplazamiento_zoom_x = desplazamiento_zoom_x + 1.5 } // resta -1 el valor de X de zoom camara  
-      if (eje_y_deteccion < height * 0.3) { desplazamiento_zoom_y = desplazamiento_zoom_y - 1.5 } // aumenta +1 a Y zoom camara
-      if (eje_y_deteccion > height * 0.7) { desplazamiento_zoom_y = desplazamiento_zoom_y + 1.5 } 
-      
-      if (eje_x_deteccion < width * 0.2) { desplazamiento_zoom_x = desplazamiento_zoom_x - 3 }
-      if (eje_x_deteccion > width * 0.8) { desplazamiento_zoom_x = desplazamiento_zoom_x + 3 } 
-      if (eje_y_deteccion < height * 0.2) { desplazamiento_zoom_y = desplazamiento_zoom_y - 3 } 
-      if (eje_y_deteccion > height * 0.8) { desplazamiento_zoom_y = desplazamiento_zoom_y + 3 }
-    }
-  
-  
+}
 
-  // limites para desplazamientos
-
-  if ( desplazamiento_zoom_x <= width * 0.1 ) { desplazamiento_zoom_x = width * 0.11}
-  if ( desplazamiento_zoom_x >= width * 0.8 ) { desplazamiento_zoom_x = width * 0.79}
-
-  if ( desplazamiento_zoom_y <= height * 0.05 ) { desplazamiento_zoom_y = height * 0.051}
-  if ( desplazamiento_zoom_y >= height * 0.8 ) { desplazamiento_zoom_y = height * 0.79}
+function Desplazamiento(){
+  if (detecta == 1) {
+    if (eje_x_deteccion < width * 0.3) { desplazamiento_zoom_x = desplazamiento_zoom_x - 1.5 } // aumenta +1 el valor de X de zoom camara
+    if (eje_x_deteccion > width * 0.7) { desplazamiento_zoom_x = desplazamiento_zoom_x + 1.5 } // resta -1 el valor de X de zoom camara  
+    if (eje_y_deteccion < height * 0.3) { desplazamiento_zoom_y = desplazamiento_zoom_y - 1.5 } // aumenta +1 a Y zoom camara
+    if (eje_y_deteccion > height * 0.7) { desplazamiento_zoom_y = desplazamiento_zoom_y + 1.5 } 
+    
+    if (eje_x_deteccion < width * 0.2) { desplazamiento_zoom_x = desplazamiento_zoom_x - 3 }
+    if (eje_x_deteccion > width * 0.8) { desplazamiento_zoom_x = desplazamiento_zoom_x + 3 } 
+    if (eje_y_deteccion < height * 0.2) { desplazamiento_zoom_y = desplazamiento_zoom_y - 3 } 
+    if (eje_y_deteccion > height * 0.8) { desplazamiento_zoom_y = desplazamiento_zoom_y + 3 }
+  }
 
 
+
+// limites para desplazamientos
+
+if ( desplazamiento_zoom_x <= width * 0.1 ) { desplazamiento_zoom_x = width * 0.11}
+if ( desplazamiento_zoom_x >= width * 0.8 ) { desplazamiento_zoom_x = width * 0.79}
+
+if ( desplazamiento_zoom_y <= height * 0.05 ) { desplazamiento_zoom_y = height * 0.051}
+if ( desplazamiento_zoom_y >= height * 0.8 ) { desplazamiento_zoom_y = height * 0.79}
 }
 
 
@@ -183,5 +206,11 @@ function keyTyped() {
 
   if (key === "g") {
     saveTable(tabla, "new" + numero_random + ".csv"); // apretando la 's' guarda el .csv
+  }
+}
+
+function gotFile(file) {
+  if (file.type === 'image') {
+    imagen_subida = createImg(file.data).hide();
   }
 }
