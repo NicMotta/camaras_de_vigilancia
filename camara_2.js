@@ -118,7 +118,7 @@ function draw() {
   
   
   
-    if (contador_button == 60){
+    if (contador_button == 120){
   
     /*
     button = createButton('CONTINUAR A MAPAS');
