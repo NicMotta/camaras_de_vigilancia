@@ -75,9 +75,6 @@ function setup() {
 
 }
 
-function preload() {
-  avatar = loadImage('assets/img/avatar.jpg');
-}
 
 function camara_vigilanciaLoad() {
   camara_vigilancia.loop();
