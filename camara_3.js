@@ -93,7 +93,7 @@ function draw() {
   //image(camara_vigilancia, 0, 0); // camara de vigilancia
 
   fill(255);
-  let texto_inicial = "Arrastre el avatar para iniciar (.... etc)";
+  let texto_inicial = "¡Arrastre su avatar aquí!";
   text(texto_inicial, width/2, height/2);
 
  
@@ -114,11 +114,11 @@ function draw() {
   blendMode(MULTIPLY);
   
   
-    image(imagen_subida, eje_x_deteccion, eje_y_deteccion, deteccion_width * 0.75, deteccion_height * 0.75);
+    image(imagen_subida, eje_x_deteccion, eje_y_deteccion, deteccion_width, deteccion_height);
   
   
   
-    if (contador_button == 250){
+    if (contador_button == 60){
   
     /*
     button = createButton('CONTINUAR A MAPAS');
@@ -136,7 +136,7 @@ function draw() {
 
 
 
-  if (millis() >= 250 + timer) {
+  if (millis() >= 1000 + timer) {
     if (detecta == 1) {
       // empieza a guardar datos cuando detecta rostros, evitamos tener NaN en el .csv
       guardarTabla();
